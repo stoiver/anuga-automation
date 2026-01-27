@@ -501,6 +501,9 @@ def main():
         domain.set_name(model_name)
         domain.set_low_froude(int(cfg["model"]["low_froude"]))
         domain.set_minimum_allowed_height(float(cfg["model"]["minimum_allowed_height"]))
+
+        domain.print_statistics()
+        
     else:
         domain = None
 

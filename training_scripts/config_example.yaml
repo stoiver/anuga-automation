@@ -55,6 +55,6 @@ simulation:
   endtime_utc: "2014-07-14 00:00:00"
   spinup_endtime_utc: "2014-07-03 00:00:00"
   timestep_sec: 300 
-  yieldstep_sec: 86400
+  yieldstep_sec: 300
   # outputstep defaults to timestep_sec if omitted
   outputstep_sec: 86400

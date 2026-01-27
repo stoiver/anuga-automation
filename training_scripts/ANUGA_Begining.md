@@ -8,7 +8,7 @@ The series of three notebooks show usage of a unstructured mesh generation, mode
 ### 1) Mesher.ipynb
 ### 2) Setup_model.py #
 ### 3) Run_model.py
-Note: config_exmpe.yaml file contains all hardcoded parameters defined in it
+Note: `config_example.yaml` file contains all hardcoded parameters defined in it
 
 
 #Necessary Datasets:
