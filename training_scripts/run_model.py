@@ -96,8 +96,8 @@ def edge_nodes(v_idx, e):
     a, b, c = v_idx
     return [(b, c), (c, a), (a, b)][e]
 
-#Builds a list of all exterior edges to creates a temporary domain to get exterior edges
-#cmpare each exterior edge distance to US/DS line → assign inlet/outlet/exterior.
+#Builds a list of all exterior edges to create a temporary domain to get exterior edges
+#compare each exterior edge distance to US/DS line → assign inlet/outlet/exterior.
 def boundary_edges_segments(pts, tris):
     """Return list of ((tri_id, e), seg_line, seg_len, mid_xy) for exterior edges."""
     tmp = anuga.Domain(coordinates=pts, vertices=tris)
@@ -489,9 +489,13 @@ def main():
             if n_outlet == 0:
                 raise RuntimeError("no 'outlet' tagged: DS line not touching domain; extend DS line to cross boundary.")
 
-        domain.boundary = boundary_map
-        existing_tags = sorted(set(boundary_map.values()))
-        domain.set_boundary({tag: None for tag in existing_tags})
+        for (tri_id,e), tag in boundary_map.items():
+            domain.boundary[(tri_id, e)] = tag
+
+        print(f"Boundary tags assigned: {domain.get_boundary_tags()}")
+        
+        boundary_tags = domain.get_boundary_tags()
+        domain.set_boundary({tag: None for tag in boundary_tags})
 
         domain.set_quantity("elevation", Zv, location="vertices")
         domain.set_quantity("stage", expression="elevation")
@@ -514,6 +518,7 @@ def main():
         domain = anuga.distribute(domain)
 
     boundary_tags = domain.get_boundary_tags()
+    print(f"Rank {MYID} boundary tags: {boundary_tags}")
 
     def stage_func(t):
         return float(level_function(t))
@@ -533,6 +538,8 @@ def main():
     total_duration_sec = (sim_endtime - sim_starttime).total_seconds()
 
     anuga.barrier()
+
+
     try:
         for t in domain.evolve(yieldstep=yieldstep_sec, outputstep=outputstep_sec, finaltime=spinup_duration_sec):
             if inlet_ATC is not None:
